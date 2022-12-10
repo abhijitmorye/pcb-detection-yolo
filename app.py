@@ -33,11 +33,14 @@ listOfKeys = []
 #     print(listOfKeys)
 
 # inference fonction
+
+
 def get_prediction(img_bytes):
     img = Image.open(io.BytesIO(img_bytes))
     # inference
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='models_train/best.pt', force_reload=True)
-    results = model(img, size=640)  
+    model = torch.hub.load('ultralytics/yolov5', 'custom',
+                           path='models_train/best.pt', force_reload=True)
+    results = model(img, size=640)
     return results
 
 
@@ -54,15 +57,15 @@ def get():
 def predict():
     file = extract_img(request)
     img_bytes = file.read()
-    
+
     # choice of the model
     # results = get_prediction(img_bytes,dictOfModels[request.form.get("model_choice")])
     results = get_prediction(img_bytes)
-    print(f'User selected model : {request.form.get("model_choice")}')
-    
+    # print(f'User selected model : {request.form.get("model_choice")}')
+
     # updates results.imgs with boxes and labels
     results.render()
-    
+
     # encoding the resulting image and return it
     for img in results.ims:
         RGB_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -75,18 +78,19 @@ def predict():
     # response.headers['Content-Type'] = 'image/jpeg'
     return response
 
+
 def extract_img(request):
     # checking if image uploaded is valid
     if 'file' not in request.files:
         raise BadRequest("Missing file parameter!")
-        
+
     file = request.files['file']
-    
+
     if file.filename == '':
         raise BadRequest("Given file is invalid")
-        
+
     return file
-    
+
 
 if __name__ == '__main__':
     print('Starting yolov5 webservice...')
@@ -111,4 +115,4 @@ if __name__ == '__main__':
     # print(f'Server now running on {os.environ["JOB_URL_SCHEME"]}{os.environ["JOB_ID"]}.{os.environ["JOB_HOST"]}')
 
     # starting app
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')
