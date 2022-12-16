@@ -6,6 +6,8 @@ import torch
 from flask import Flask, render_template, request, make_response
 from werkzeug.exceptions import BadRequest
 import os
+from flask import send_file
+import json
 
 
 # creating flask app
@@ -72,11 +74,30 @@ def predict():
         im_arr = cv2.imencode('.jpg', RGB_img)[1]
         response = make_response(im_arr.tobytes())
         response.headers['Content-Type'] = 'image/jpeg'
+        response.info = results
+        cv2.imwrite('static/results/result.jpg', img)
     # RGB_img = cv2.cvtColor(results, cv2.COLOR_BGR2RGB)
     # im_arr = cv2.imencode('.jpg', RGB_img)[1]
     # response = make_response(im_arr.tobytes())
     # response.headers['Content-Type'] = 'image/jpeg'
-    return response
+    # results.save()
+    # print("****", results)
+    result_json = results.pandas().xyxy[0].to_json(orient="records")
+    result_list = json.loads(result_json)
+    context = {}
+    counter = 0
+    for result in result_list:
+        for key, value in result.items():
+            if key == 'name':
+                context['Name_' + str(counter)] = result[key] + " " +\
+                    str(float("{:.2f}".format(result['confidence'])))
+        counter = counter + 1
+    print(context)
+
+    # return response
+    return render_template("results.html", context=context)
+
+    # return sender_template(response, mimetype='image/gif')
 
 
 def extract_img(request):
