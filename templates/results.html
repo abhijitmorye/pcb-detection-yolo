@@ -1,0 +1,23 @@
+<link rel="stylesheet" href="/static/style1.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div id="container">
+
+	<div class="product-image">
+
+		<img src="{{url_for('static', filename='results/result.jpg')}}" alt="">
+
+
+		<div class="info">
+			<h2> Inference </h2>
+			<ul>
+				{% for key, value in context.items()%}
+				<li><strong>{{value}}</strong></li>
+				<!-- <li><strong>{{Key}} : </strong>{{value}} </li> -->
+				<!-- <li><strong>Decoration: </strong>balls and bells</li>
+		<li><strong>Material: </strong>Eco-Friendly</li> -->
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+</div>
